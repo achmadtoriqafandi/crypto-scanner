@@ -151,11 +151,34 @@ class DashboardController extends Controller
      */
     protected function getMacroEvents(): array
     {
-        $now = now();
+        $today = now();
 
-        $cpiDate  = $now->isWednesday() ? 'Today, 19:30 WIB' : ($now->isTuesday() ? 'Tomorrow, 19:30 WIB' : $now->next(Carbon::WEDNESDAY)->format('D, M d — 19:30 WIB'));
-        $fomcDate = $now->isThursday()  ? 'Today, 01:00 WIB' : ($now->isWednesday() ? 'Tomorrow, 01:00 WIB' : $now->next(Carbon::THURSDAY)->format('D, M d — 01:00 WIB'));
-        $nfpDate  = $now->isFriday()    ? 'Today, 19:30 WIB' : $now->next(Carbon::FRIDAY)->format('D, M d — 19:30 WIB');
+        // CPI (Wednesday 19:30 WIB)
+        if ($today->isWednesday()) {
+            $cpiDate = 'Today, 19:30 WIB';
+        } elseif ($today->isTuesday()) {
+            $cpiDate = 'Tomorrow, 19:30 WIB';
+        } else {
+            $cpiDate = $today->copy()->next(Carbon::WEDNESDAY)->format('D, M d — 19:30 \W\I\B');
+        }
+
+        // FOMC (Thursday 01:00 WIB / Wed Night US Time)
+        if ($today->isThursday()) {
+            $fomcDate = 'Today, 01:00 WIB';
+        } elseif ($today->isWednesday()) {
+            $fomcDate = 'Tomorrow, 01:00 WIB';
+        } else {
+            $fomcDate = $today->copy()->next(Carbon::THURSDAY)->format('D, M d — 01:00 \W\I\B');
+        }
+
+        // NFP (Friday 19:30 WIB)
+        if ($today->isFriday()) {
+            $nfpDate = 'Today, 19:30 WIB';
+        } elseif ($today->isThursday()) {
+            $nfpDate = 'Tomorrow, 19:30 WIB';
+        } else {
+            $nfpDate = $today->copy()->next(Carbon::FRIDAY)->format('D, M d — 19:30 \W\I\B');
+        }
 
         return [
             [
