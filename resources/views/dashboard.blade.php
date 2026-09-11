@@ -322,33 +322,17 @@
     </div>
     <div class="card-body">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+            @foreach($macroEvents as $event)
             <div style="background:var(--bg-800);border:1px solid var(--border);border-radius:10px;padding:12px">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                    <span class="badge badge-short" style="font-size:10px">🔥 HIGH IMPACT</span>
-                    <span style="font-size:11px;color:var(--text-muted)">Today, 19:30 WIB</span>
+                    <span class="badge badge-{{ $event['badge_type'] }}" style="font-size:10px">{{ $event['badge'] }}</span>
+                    <span style="font-size:11px;color:var(--text-muted)">{{ $event['time'] }}</span>
                 </div>
-                <div style="font-weight:700;font-size:13px;color:var(--text-primary)">🇺🇸 US CPI Inflation Rate (YoY)</div>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Forecast: 2.9% | Previous: 3.0%</div>
-                <div style="font-size:10px;color:var(--yellow);margin-top:6px;font-weight:600">⚠️ Expect high volatility on BTC/ETH</div>
+                <div style="font-weight:700;font-size:13px;color:var(--text-primary)">{{ $event['title'] }}</div>
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Forecast: {{ $event['forecast'] }} | Previous: {{ $event['previous'] }}</div>
+                <div style="font-size:10px;color:{{ str_starts_with($event['alert_color'], 'var(') || str_starts_with($event['alert_color'], '#') ? $event['alert_color'] : 'var(--' . $event['alert_color'] . ')' }};margin-top:6px;font-weight:600">{{ $event['alert'] }}</div>
             </div>
-            <div style="background:var(--bg-800);border:1px solid var(--border);border-radius:10px;padding:12px">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                    <span class="badge badge-purple" style="font-size:10px">⭐ FED DECISION</span>
-                    <span style="font-size:11px;color:var(--text-muted)">Tomorrow, 01:00 WIB</span>
-                </div>
-                <div style="font-weight:700;font-size:13px;color:var(--text-primary)">🏛️ FOMC Rate Decision & Press Conf</div>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Forecast: 5.25% | Previous: 5.50%</div>
-                <div style="font-size:10px;color:var(--green);margin-top:6px;font-weight:600">🚀 Potential Rate Cut Catalyst</div>
-            </div>
-            <div style="background:var(--bg-800);border:1px solid var(--border);border-radius:10px;padding:12px">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                    <span class="badge badge-blue" style="font-size:10px">📊 JOBS REPORT</span>
-                    <span style="font-size:11px;color:var(--text-muted)">Friday, 19:30 WIB</span>
-                </div>
-                <div style="font-weight:700;font-size:13px;color:var(--text-primary)">💼 US Non-Farm Payrolls (NFP)</div>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Forecast: 175K | Previous: 206K</div>
-                <div style="font-size:10px;color:var(--text-muted);margin-top:6px">Dollar Index Impact</div>
-            </div>
+            @endforeach
         </div>
     </div>
 </div>

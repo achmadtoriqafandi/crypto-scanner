@@ -133,6 +133,8 @@ class DashboardController extends Controller
             }
         }
 
+        $macroEvents = $this->getMacroEvents();
+
         return view('dashboard', compact(
             'totalCoins', 'signalsToday', 'signalsSent', 'signalsPending',
             'signalsLong', 'signalsShort', 'lastScan', 'activeSignals',
@@ -140,8 +142,53 @@ class DashboardController extends Controller
             'totalClosed', 'totalWins', 'totalLosses', 'winRate', 'totalPnl',
             'hitTp3Count', 'hitTp2Count', 'hitTp1Count', 'hitSlCount',
             'marketSentiment', 'recentNews', 'topPotentialCoins',
-            'heatmapCoins', 'weeklySignals'
+            'heatmapCoins', 'weeklySignals', 'macroEvents'
         ));
+    }
+
+    /**
+     * Generate dynamic Macro Economic Calendar Events relative to current week/date
+     */
+    protected function getMacroEvents(): array
+    {
+        $now = now();
+
+        $cpiDate  = $now->isWednesday() ? 'Today, 19:30 WIB' : ($now->isTuesday() ? 'Tomorrow, 19:30 WIB' : $now->next(Carbon::WEDNESDAY)->format('D, M d — 19:30 WIB'));
+        $fomcDate = $now->isThursday()  ? 'Today, 01:00 WIB' : ($now->isWednesday() ? 'Tomorrow, 01:00 WIB' : $now->next(Carbon::THURSDAY)->format('D, M d — 01:00 WIB'));
+        $nfpDate  = $now->isFriday()    ? 'Today, 19:30 WIB' : $now->next(Carbon::FRIDAY)->format('D, M d — 19:30 WIB');
+
+        return [
+            [
+                'badge'       => '🔥 HIGH IMPACT',
+                'badge_type'  => 'short',
+                'time'        => $cpiDate,
+                'title'       => '🇺🇸 US CPI Inflation Rate (YoY)',
+                'forecast'    => '2.9%',
+                'previous'    => '3.0%',
+                'alert'       => '⚠️ Expect high volatility on BTC/ETH',
+                'alert_color' => 'yellow',
+            ],
+            [
+                'badge'       => '⭐ FED DECISION',
+                'badge_type'  => 'purple',
+                'time'        => $fomcDate,
+                'title'       => '🏛️ FOMC Rate Decision & Press Conf',
+                'forecast'    => '5.25%',
+                'previous'    => '5.50%',
+                'alert'       => '🚀 Potential Rate Cut Catalyst',
+                'alert_color' => 'green',
+            ],
+            [
+                'badge'       => '📊 JOBS REPORT',
+                'badge_type'  => 'blue',
+                'time'        => $nfpDate,
+                'title'       => '💼 US Non-Farm Payrolls (NFP)',
+                'forecast'    => '175K',
+                'previous'    => '206K',
+                'alert'       => 'Dollar Index Impact',
+                'alert_color' => 'text-muted',
+            ],
+        ];
     }
 
     public function runScanner(Request $request)
