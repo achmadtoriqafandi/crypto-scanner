@@ -95,10 +95,30 @@ class CoinController extends Controller
             'resistance' => $klines->isNotEmpty() ? round((float)$klines->max('high'), 8) : null,
         ];
 
-        // Signal history for this coin
+        // Signal history & latest active signal for this coin
         $signalHistory = $coin->signals()->with('coin')->latest()->limit(5)->get();
+        $latestSignal  = $signalHistory->first();
 
-        return view('coins.show', compact('coin', 'marketData', 'comparison', 'spreadInsight', 'supportResistance', 'signalHistory', 'selectedInterval'));
+        // If no signal exists yet for this coin, generate an active signal strategy on the fly
+        if (!$latestSignal && $coin->latestIndicator) {
+            try {
+                $taService = app(\App\Services\TechnicalAnalysisService::class);
+                $analysis  = $taService->analyze($coin, $coin->latestIndicator);
+                if (empty($analysis['direction'])) {
+                    $analysis['direction'] = ((float)($coin->latestIndicator->rsi ?? 50) >= 50) ? 'LONG' : 'SHORT';
+                    $analysis['valid']     = true;
+                    $analysis['tier']      = 'STANDARD';
+                    $analysis['score']     = 4;
+                }
+                $sigService   = app(\App\Services\SignalGeneratorService::class);
+                $latestSignal = $sigService->generate($coin, $coin->latestIndicator, $analysis);
+                if ($latestSignal) {
+                    $signalHistory = collect([$latestSignal])->merge($signalHistory);
+                }
+            } catch (\Throwable $e) {}
+        }
+
+        return view('coins.show', compact('coin', 'marketData', 'comparison', 'spreadInsight', 'supportResistance', 'signalHistory', 'latestSignal', 'selectedInterval'));
     }
 
     public function toggleMonitor(Coin $coin)

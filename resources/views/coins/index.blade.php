@@ -143,7 +143,7 @@
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('coins.show', $coin) }}" class="btn btn-ghost btn-sm">View</a>
+                        <a href="{{ route('coins.show', $coin) }}" class="btn btn-primary btn-sm" style="font-size:11px;padding:5px 12px;white-space:nowrap">⚡ View Analytics & Signal</a>
                     </td>
                 </tr>
                 @empty

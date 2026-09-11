@@ -56,6 +56,9 @@
     @endif
 </div>
 
+{{-- ======= ⚡ ACTIVE SIGNAL & TRADE EXECUTION CONSOLE ======= --}}
+@include('signals.partials.signal_console')
+
 {{-- ======= MULTI-TIMEFRAME ALIGNMENT MATRIX ======= --}}
 @php
     $ind15m = $coin->indicators()->where('interval', '15m')->latest('calculated_at')->first();
