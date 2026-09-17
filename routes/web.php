@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BacktestController;
 use App\Http\Controllers\CoinController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\ScalpingController;
 use App\Http\Controllers\SettingController;
@@ -69,6 +70,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::get('/settings/test-telegram', [SettingController::class, 'testTelegram'])->name('settings.test-telegram');
+
+    // Panduan Penggunaan / User Manual Guide
+    Route::get('/guide', [GuideController::class, 'index'])->name('guide.index');
 });
 
 // Public API & Webhook Endpoints

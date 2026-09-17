@@ -64,6 +64,12 @@
             <a href="{{ route('settings.index') }}" class="nav-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                 <span class="nav-icon">⚙️</span> Settings
             </a>
+
+            <div class="nav-section-title">Help & Guide</div>
+
+            <a href="{{ route('guide.index') }}" class="nav-item {{ request()->routeIs('guide.*') ? 'active' : '' }}">
+                <span class="nav-icon">📖</span> Panduan Penggunaan
+            </a>
         </nav>
 
         <div class="sidebar-footer">
