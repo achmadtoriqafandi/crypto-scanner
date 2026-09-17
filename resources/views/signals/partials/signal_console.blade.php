@@ -4,12 +4,12 @@
 @php $prox = $signal->entry_proximity_info; @endphp
 
 {{-- Direction & Outcome Banner --}}
-<div class="signal-direction-banner {{ strtolower($signal->direction) }}" style="margin-bottom:16px">
+<div class="signal-direction-banner {{ strtolower($signal->direction) }}" style="margin-bottom:16px;border-radius:12px">
     <div>
         <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">
             SIGNAL #{{ $signal->id }} &bull; 
             @if($signal->tier === 'VIP')
-                <span class="badge badge-purple">⭐ VIP TIER</span>
+                <span class="badge badge-purple">⭐ VIP PRO TIER</span>
             @else
                 <span class="badge badge-blue">STANDARD TIER</span>
             @endif
@@ -19,7 +19,7 @@
                 {{ $signal->direction_emoji }} {{ $signal->direction }}
             </span>
             <div>
-                <div style="font-size:20px;font-weight:700;font-family:var(--font-mono)">
+                <div style="font-size:22px;font-weight:800;font-family:var(--font-mono)">
                     {{ $signal->coin->base_asset }} / USDT
                 </div>
                 <div style="font-size:12px;color:var(--text-muted)">
@@ -53,30 +53,30 @@
 </div>
 
 {{-- Entry Proximity & Advice Banner --}}
-<div class="card mb-3" style="background:var(--bg-800);border:1px solid var(--border);padding:12px 16px">
+<div class="card mb-3" style="background:var(--bg-800);border:1px solid var(--border);padding:14px 18px;border-radius:12px">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <div style="display:flex;align-items:center;gap:10px">
-            <span class="badge {{ $prox['badge'] }}" style="font-size:14px;padding:6px 12px;font-weight:700">
+        <div style="display:flex;align-items:center;gap:12px">
+            <span class="badge {{ $prox['badge'] }}" style="font-size:14px;padding:6px 14px;font-weight:800">
                 {{ $prox['label'] }}
             </span>
-            <span style="font-size:13px;color:var(--text-primary);font-weight:600">
+            <span style="font-size:13px;color:var(--text-primary);font-weight:700">
                 💡 Advice: {{ $prox['advice'] }}
             </span>
         </div>
-        <div style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono)">
-            Current Price: <strong style="color:var(--text-primary);font-size:14px">${{ fmtPrice($signal->coin->last_price ?? $signal->entry_price) }}</strong>
+        <div style="font-size:13px;color:var(--text-muted);font-family:var(--font-mono)">
+            Current Price: <strong style="color:var(--text-primary);font-size:15px">${{ fmtPrice($signal->coin->last_price ?? $signal->entry_price) }}</strong>
         </div>
     </div>
 </div>
 
 {{-- Risk Management Guide --}}
-<div class="card mb-3" style="background:linear-gradient(135deg, rgba(0,212,160,0.1) 0%, rgba(23,27,36,0.95) 100%);border:1px solid rgba(0,212,160,0.4)">
+<div class="card mb-3" style="background:linear-gradient(135deg, rgba(0,212,160,0.12) 0%, rgba(23,27,36,0.95) 100%);border:1px solid rgba(0,212,160,0.4);border-radius:12px">
     <div style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
         <div style="display:flex;align-items:center;gap:12px">
             <span style="font-size:24px">🛡️</span>
             <div>
                 <div style="font-size:13px;font-weight:700;color:var(--green)">
-                    ASSISTANT RISK MANAGEMENT GUIDE
+                    ASSISTANT RISK MANAGEMENT GUIDE (PRO PROTOCOL)
                 </div>
                 <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">
                     @if(in_array($signal->outcome, ['hit_tp1', 'hit_tp2', 'hit_tp3']))
@@ -91,19 +91,36 @@
     </div>
 </div>
 
-{{-- Position Size & Leverage Calculator Widget --}}
-<div class="card mb-3" style="background:var(--bg-700);border:1px solid rgba(77,158,255,0.3);border-radius:12px;padding:16px 20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px">
+{{-- ======= 🧮 SUPER PRO POSITION SIZE & RISK CALCULATOR WIDGET ======= --}}
+<div class="card mb-3" style="background:var(--bg-700);border:1px solid rgba(77,158,255,0.35);border-radius:12px;padding:18px 22px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px">
         <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:18px">🧮</span>
-            <div style="font-size:14px;font-weight:700;color:var(--text-primary)">
-                POSITION SIZE & LEVERAGE CALCULATOR
+            <span style="font-size:20px">🧮</span>
+            <div>
+                <div style="font-size:14px;font-weight:800;color:var(--text-primary)">
+                    SUPER PRO POSITION SIZE & LEVERAGE CALCULATOR
+                </div>
+                <div style="font-size:11px;color:var(--text-muted)">Auto-calculates exact contract quantity, margin & potential payouts</div>
             </div>
         </div>
-        <span class="badge badge-blue">Binance Futures / Spot</span>
+        <span class="badge badge-blue">Binance Futures / Spot Pro</span>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;align-items:end;margin-bottom:14px">
+    {{-- Quick Presets Row --}}
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:700">QUICK BALANCES:</div>
+        <button onclick="setBalancePreset_{{ $signal->id }}(250)" class="btn btn-ghost btn-sm" style="font-size:11px;padding:2px 8px">$250</button>
+        <button onclick="setBalancePreset_{{ $signal->id }}(500)" class="btn btn-ghost btn-sm" style="font-size:11px;padding:2px 8px">$500</button>
+        <button onclick="setBalancePreset_{{ $signal->id }}(1000)" class="btn btn-ghost btn-sm" style="font-size:11px;padding:2px 8px">$1,000</button>
+        <button onclick="setBalancePreset_{{ $signal->id }}(5000)" class="btn btn-ghost btn-sm" style="font-size:11px;padding:2px 8px">$5,000</button>
+
+        <div style="font-size:11px;color:var(--text-muted);font-weight:700;margin-left:auto">RISK PRESETS:</div>
+        <button onclick="setRiskPreset_{{ $signal->id }}(0.5)" class="btn btn-ghost btn-sm" style="font-size:11px;padding:2px 8px">0.5% Low</button>
+        <button onclick="setRiskPreset_{{ $signal->id }}(1.0)" class="btn btn-ghost btn-sm" style="font-size:11px;padding:2px 8px">1.0% Std</button>
+        <button onclick="setRiskPreset_{{ $signal->id }}(2.0)" class="btn btn-ghost btn-sm" style="font-size:11px;padding:2px 8px">2.0% Pro</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;align-items:end;margin-bottom:14px">
         <div>
             <label style="font-size:11px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:4px">PORTFOLIO BALANCE ($)</label>
             <input type="number" id="calcBalance_{{ $signal->id }}" value="1000" step="50" oninput="calculatePositionSize_{{ $signal->id }}()" style="width:100%;background:var(--bg-800);border:1px solid var(--border);color:var(--text-primary);padding:8px 12px;border-radius:8px;font-weight:700;font-size:13px;outline:none">
@@ -115,7 +132,7 @@
         <div>
             <label style="font-size:11px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:4px">TARGET LEVERAGE (x)</label>
             <select id="calcLeverage_{{ $signal->id }}" onchange="calculatePositionSize_{{ $signal->id }}()" style="width:100%;background:var(--bg-800);border:1px solid var(--border);color:var(--text-primary);padding:8px 12px;border-radius:8px;font-weight:700;font-size:13px;outline:none">
-                <option value="5">5x Cross / Isolated</option>
+                <option value="5">5x Conservative</option>
                 <option value="10" selected>10x Recommended</option>
                 <option value="15">15x Aggressive</option>
                 <option value="20">20x High Leverage</option>
@@ -124,7 +141,7 @@
     </div>
 
     {{-- Calculated Results Grid --}}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:10px;background:var(--bg-900);padding:12px;border-radius:10px;border:1px solid var(--border)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:10px;background:var(--bg-900);padding:14px;border-radius:10px;border:1px solid var(--border)">
         <div>
             <div style="font-size:11px;color:var(--text-muted)">Max Loss ($)</div>
             <div id="calcMaxLoss_{{ $signal->id }}" style="font-size:15px;font-weight:800;color:var(--red);font-family:var(--font-mono)">$10.00</div>
@@ -134,21 +151,33 @@
             <div id="calcMargin_{{ $signal->id }}" style="font-size:15px;font-weight:800;color:var(--blue);font-family:var(--font-mono)">$35.50</div>
         </div>
         <div>
-            <div style="font-size:11px;color:var(--text-muted)">Position Size</div>
+            <div style="font-size:11px;color:var(--text-muted)">Position Size (USD)</div>
             <div id="calcPosSize_{{ $signal->id }}" style="font-size:15px;font-weight:800;color:var(--text-primary);font-family:var(--font-mono)">$355.00</div>
         </div>
         <div>
-            <div style="font-size:11px;color:var(--text-muted)">Potential Profit TP1</div>
+            <div style="font-size:11px;color:var(--text-muted)">Contract Quantity</div>
+            <div id="calcAssetQty_{{ $signal->id }}" style="font-size:15px;font-weight:800;color:var(--yellow);font-family:var(--font-mono)">0.00</div>
+        </div>
+        <div>
+            <div style="font-size:11px;color:var(--text-muted)">Profit TP1</div>
             <div id="calcProfitTp1_{{ $signal->id }}" style="font-size:15px;font-weight:800;color:var(--green);font-family:var(--font-mono)">+$15.00</div>
         </div>
         <div>
-            <div style="font-size:11px;color:var(--text-muted)">Potential Profit TP3</div>
+            <div style="font-size:11px;color:var(--text-muted)">Profit TP3</div>
             <div id="calcProfitTp3_{{ $signal->id }}" style="font-size:15px;font-weight:800;color:var(--green);font-family:var(--font-mono)">+$40.00</div>
         </div>
     </div>
 </div>
 
 <script>
+function setBalancePreset_{{ $signal->id }}(amt) {
+    document.getElementById('calcBalance_{{ $signal->id }}').value = amt;
+    calculatePositionSize_{{ $signal->id }}();
+}
+function setRiskPreset_{{ $signal->id }}(pct) {
+    document.getElementById('calcRiskPct_{{ $signal->id }}').value = pct;
+    calculatePositionSize_{{ $signal->id }}();
+}
 function calculatePositionSize_{{ $signal->id }}() {
     const entry = {{ (float)$signal->entry_price }};
     const sl    = {{ (float)$signal->stop_loss }};
@@ -164,6 +193,7 @@ function calculatePositionSize_{{ $signal->id }}() {
 
     let positionUsdt = maxLoss / slDistPct;
     let marginNeeded = positionUsdt / lev;
+    let assetQty     = entry > 0 ? (positionUsdt / entry) : 0;
 
     let tp1DistPct = Math.abs(tp1 - entry) / entry;
     let tp3DistPct = Math.abs(tp3 - entry) / entry;
@@ -174,19 +204,23 @@ function calculatePositionSize_{{ $signal->id }}() {
     document.getElementById('calcMaxLoss_{{ $signal->id }}').textContent = '$' + maxLoss.toFixed(2);
     document.getElementById('calcMargin_{{ $signal->id }}').textContent  = '$' + marginNeeded.toFixed(2);
     document.getElementById('calcPosSize_{{ $signal->id }}').textContent = '$' + positionUsdt.toFixed(2);
+    document.getElementById('calcAssetQty_{{ $signal->id }}').textContent = assetQty > 10 ? assetQty.toFixed(1) + ' {{ $signal->coin->base_asset }}' : assetQty.toFixed(4) + ' {{ $signal->coin->base_asset }}';
     document.getElementById('calcProfitTp1_{{ $signal->id }}').textContent = '+$' + profitTp1.toFixed(2);
     document.getElementById('calcProfitTp3_{{ $signal->id }}').textContent = '+$' + profitTp3.toFixed(2);
 }
 document.addEventListener('DOMContentLoaded', calculatePositionSize_{{ $signal->id }});
 </script>
 
-{{-- Order Execution Console --}}
-<div class="card mb-3" style="background:linear-gradient(135deg, rgba(23,27,36,0.98), rgba(15,23,42,0.98));border:1px solid rgba(0,212,160,0.4);border-radius:12px;padding:16px 20px">
+{{-- ======= ⚡ ONE-CLICK ORDER EXECUTION CONSOLE ======= --}}
+<div class="card mb-3" style="background:linear-gradient(135deg, rgba(23,27,36,0.98), rgba(15,23,42,0.98));border:1px solid rgba(0,212,160,0.4);border-radius:12px;padding:18px 22px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px">
         <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:18px">⚡</span>
-            <div style="font-size:14px;font-weight:700;color:var(--green)">
-                ONE-CLICK ORDER EXECUTION CONSOLE
+            <span style="font-size:20px">⚡</span>
+            <div>
+                <div style="font-size:14px;font-weight:800;color:var(--green)">
+                    ONE-CLICK ORDER EXECUTION CONSOLE (SUPER PRO)
+                </div>
+                <div style="font-size:11px;color:var(--text-muted)">Direct API Execution & Order Journal</div>
             </div>
         </div>
         <span class="badge badge-pass">API / Webhook Direct Trading</span>
@@ -302,7 +336,7 @@ function executeOrderNow_{{ $signal->id }}() {
     $distCur   = $entry > 0 ? round((($curP - $entry) / $entry) * 100, 2) : 0;
 @endphp
 
-<div class="card mb-4" style="background:var(--bg-700);border:1px solid rgba(77,158,255,0.3)">
+<div class="card mb-4" style="background:var(--bg-700);border:1px solid rgba(77,158,255,0.3);border-radius:12px">
     <div class="card-header">
         <div class="card-title">📏 Visual Price Ruler — {{ $signal->coin->base_asset }}/USDT</div>
         <a href="{{ route('signals.show', $signal) }}" class="btn btn-ghost btn-sm">⚡ Full Signal Page →</a>
