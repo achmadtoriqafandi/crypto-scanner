@@ -9,6 +9,7 @@ use Tests\TestCase;
 
 class SecurityAndAuthTest extends TestCase
 {
+    use RefreshDatabase;
     public function test_login_page_renders_without_exposed_credentials(): void
     {
         $response = $this->get('/login');
@@ -77,5 +78,14 @@ class SecurityAndAuthTest extends TestCase
         ]);
 
         $postResponse->assertSessionHasErrors('email');
+    }
+
+    public function test_public_access_mode_allows_guest_access(): void
+    {
+        config(['auth.public_access' => true]);
+
+        $response = $this->get('/');
+        $response->assertStatus(200);
+        $response->assertSee('Public Access Mode');
     }
 }

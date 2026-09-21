@@ -167,6 +167,18 @@
                     </form>
                 </div>
                 @endauth
+                @guest
+                @if(config('auth.public_access'))
+                <div style="display:flex;align-items:center;gap:8px;padding-left:8px;border-left:1px solid var(--border)">
+                    <div style="font-size:11px;font-weight:700;color:#4d9eff;background:rgba(77,158,255,0.15);padding:4px 8px;border-radius:6px;border:1px solid rgba(77,158,255,0.3)" title="Platform running in Public Access Mode">
+                        🌐 Public Access Mode
+                    </div>
+                    <a href="{{ route('login') }}" class="btn btn-ghost" style="padding:4px 8px;font-size:11px;color:var(--green);border:1px solid rgba(0,212,160,0.3)">
+                        🔑 Login
+                    </a>
+                </div>
+                @endif
+                @endguest
             </div>
         </header>
 

@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
         $middleware->append(\App\Http\Middleware\SecurityHeadersMiddleware::class);
+        $middleware->alias([
+            'auth' => \App\Http\Middleware\EnsureAuthOrPublicAccess::class,
+        ]);
         $middleware->validateCsrfTokens(except: [
             'telegram/webhook',
             'telegram/*',

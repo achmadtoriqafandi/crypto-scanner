@@ -120,6 +120,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
+    'public_access' => env('PUBLIC_ACCESS', false),
     'allow_login' => env('ALLOW_LOGIN', true),
     'allow_registration' => env('ALLOW_REGISTRATION', false),
     'show_demo_credentials' => env('SHOW_DEMO_CREDENTIALS', false),
