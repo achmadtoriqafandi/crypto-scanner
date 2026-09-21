@@ -20,8 +20,10 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('vendor.pagination.custom');
         Paginator::defaultSimpleView('vendor.pagination.custom');
 
-        // Force HTTPS scheme on Ngrok / Proxies to prevent Mixed Content CSS block
-        if (request()->server('HTTP_X_FORWARDED_PROTO') === 'https' 
+        // Force HTTPS scheme on Ngrok / Proxies / Production to prevent Mixed Content
+        if (env('FORCE_HTTPS', false)
+            || app()->environment('production')
+            || request()->server('HTTP_X_FORWARDED_PROTO') === 'https' 
             || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
             || str_contains(request()->getHost(), 'ngrok')
             || str_contains(request()->header('User-Agent', ''), 'ngrok')

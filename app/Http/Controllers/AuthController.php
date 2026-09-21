@@ -12,11 +12,18 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login');
+        $loginAllowed = config('auth.allow_login', true);
+        return view('auth.login', compact('loginAllowed'));
     }
 
     public function login(Request $request)
     {
+        if (!config('auth.allow_login', true)) {
+            return back()->withErrors([
+                'email' => 'Akses login ke platform saat ini dinonaktifkan oleh Administrator.',
+            ]);
+        }
+
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
@@ -36,11 +43,18 @@ class AuthController extends Controller
 
     public function showRegisterForm()
     {
-        return view('auth.register');
+        $registrationAllowed = config('auth.allow_registration', false);
+        return view('auth.register', compact('registrationAllowed'));
     }
 
     public function register(Request $request)
     {
+        if (!config('auth.allow_registration', false)) {
+            return back()->withErrors([
+                'email' => 'Pendaftaran akun publik saat ini ditutup. Silakan hubungi Administrator untuk mendapatkan akses.',
+            ]);
+        }
+
         $validated = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],

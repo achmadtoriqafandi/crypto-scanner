@@ -70,14 +70,34 @@
             margin-bottom: 20px;
         }
 
+        .form-label-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
         .form-label {
             display: block;
             font-size: 12px;
             font-weight: 700;
             color: #a0aec0;
-            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .forgot-link {
+            font-size: 12px;
+            color: #00d4a0;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-link:hover {
+            color: #4d9eff;
+            text-decoration: underline;
         }
 
         .form-control {
@@ -158,6 +178,16 @@
             margin-bottom: 20px;
         }
 
+        .alert-info {
+            background: rgba(0, 212, 160, 0.12);
+            border: 1px solid rgba(0, 212, 160, 0.3);
+            color: #00d4a0;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
         .demo-credentials {
             background: rgba(77, 158, 255, 0.1);
             border: 1px dashed rgba(77, 158, 255, 0.4);
@@ -165,11 +195,86 @@
             padding: 12px 14px;
             font-size: 12px;
             margin-bottom: 20px;
-            color: #7209b7;
+            color: #a0aec0;
         }
 
         .demo-credentials strong {
             color: #4d9eff;
+        }
+
+        .risk-disclaimer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .risk-disclaimer span {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        /* Modal dialog style for forgot password guidance */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: #171b24;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            color: #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-body {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-close-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -183,6 +288,12 @@
             <p class="auth-subtitle">Masuk untuk mengakses Signal Command Center</p>
         </div>
 
+        @if(session('info'))
+            <div class="alert-info">
+                ℹ️ {{ session('info') }}
+            </div>
+        @endif
+
         @if($errors->any())
             <div class="alert-error">
                 @foreach($errors->all() as $error)
@@ -191,42 +302,84 @@
             </div>
         @endif
 
-        <div class="demo-credentials">
-            <strong>💡 Akun Demo Admin:</strong><br>
-            Email: <code style="color:#fff">admin@cryptoscanner.com</code><br>
-            Password: <code style="color:#fff">password123</code>
-        </div>
-
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-
-            <div class="form-group">
-                <label class="form-label" for="email">Alamat Email</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{ old('email', 'admin@cryptoscanner.com') }}" required autofocus placeholder="nama@email.com">
+        @if(isset($loginAllowed) && !$loginAllowed)
+            <div class="login-disabled-box" style="background: rgba(255, 77, 109, 0.1); border: 1px dashed rgba(255, 77, 109, 0.4); border-radius: 12px; padding: 20px; text-align: center; color: #ff4d6d; margin-bottom: 20px;">
+                <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700;">🔒 Login Dinonaktifkan</h3>
+                <p style="margin: 0; font-size: 13px; color: #cbd5e1; line-height: 1.5;">
+                    Akses autentikasi ke platform saat ini ditutup oleh Administrator melalui sistem pemeliharaan / konfigurasi lingkungan (<code style="color:#ff4d6d">ALLOW_LOGIN=false</code>).
+                </p>
             </div>
+        @else
+            @if(config('auth.show_demo_credentials'))
+                <div class="demo-credentials">
+                    <strong>💡 Environment Demo Staging:</strong><br>
+                    Email: <code style="color:#fff">admin@cryptoscanner.com</code><br>
+                    Password: <code style="color:#fff">password123</code>
+                </div>
+            @endif
 
-            <div class="form-group">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" value="password123" required placeholder="••••••••">
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Alamat Email</label>
+                    <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" required autofocus placeholder="nama@email.com">
+                </div>
+
+                <div class="form-group">
+                    <div class="form-label-wrapper">
+                        <label class="form-label" for="password">Password</label>
+                        <span class="forgot-link" onclick="openForgotModal()">Lupa Password?</span>
+                    </div>
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="••••••••">
+                </div>
+
+                <div class="form-actions">
+                    <label class="remember-checkbox">
+                        <input type="checkbox" name="remember" checked style="accent-color:#00d4a0">
+                        Ingat Saya di Perangkat Ini
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    🔑 MASUK KE PLATFORM
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Belum memiliki akun? <a href="{{ route('register') }}">Daftar Akun Baru</a>
             </div>
+        @endif
 
-            <div class="form-actions">
-                <label class="remember-checkbox">
-                    <input type="checkbox" name="remember" checked style="accent-color:#00d4a0">
-                    Ingat Saya di Perangkat Ini
-                </label>
-            </div>
-
-            <button type="submit" class="btn-submit">
-                🔑 MASUK KE PLATFORM
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            Belum memiliki akun? <a href="{{ route('register') }}">Daftar Akun Baru</a>
+        <div class="risk-disclaimer">
+            <span>⚠️ Disclaimer Risiko Trading:</span> Perdagangan aset kripto memiliki tingkat risiko yang tinggi. Semua indikator & sinyal dalam platform ini hanya sebagai alat bantu analisis teknis dan bukan merupakan nasehat keuangan (*Financial Advice*).
         </div>
     </div>
 </div>
+
+<!-- Modal Dialog Lupa Password -->
+<div class="modal-overlay" id="forgotModal">
+    <div class="modal-box">
+        <h3 class="modal-title">🔐 Reset / Lupa Password</h3>
+        <div class="modal-body">
+            Untuk menjaga keamanan platform, pemulihan akun dilakukan secara terpusat oleh Administrator.
+            <br><br>
+            • Kontak tim IT internal / Admin terdaftar untuk mereset akun Anda.<br>
+            • Jika Anda pemilik server, Anda dapat mengatur ulang password admin via terminal:<br>
+            <code style="display:block; background:rgba(0,0,0,0.5); padding:8px; border-radius:6px; margin-top:6px; color:#00d4a0;">php artisan auth:secure-admin</code>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeForgotModal()">Tutup</button>
+    </div>
+</div>
+
+<script>
+    function openForgotModal() {
+        document.getElementById('forgotModal').style.display = 'flex';
+    }
+    function closeForgotModal() {
+        document.getElementById('forgotModal').style.display = 'none';
+    }
+</script>
 
 </body>
 </html>

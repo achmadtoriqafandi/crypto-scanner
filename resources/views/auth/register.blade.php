@@ -113,6 +113,10 @@
             box-shadow: 0 10px 25px rgba(0, 212, 160, 0.35);
             margin-top: 10px;
             transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
         }
 
         .btn-submit:hover {
@@ -142,6 +146,44 @@
             font-size: 13px;
             margin-bottom: 20px;
         }
+
+        .registration-closed-box {
+            background: rgba(255, 171, 0, 0.1);
+            border: 1px dashed rgba(255, 171, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+
+        .registration-closed-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .registration-closed-box p {
+            margin: 0;
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .risk-disclaimer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .risk-disclaimer span {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -150,7 +192,7 @@
     <div class="auth-card">
         <div class="auth-header">
             <div class="auth-logo">⚡</div>
-            <h1 class="auth-title">Daftar Akun Barumu</h1>
+            <h1 class="auth-title">Crypto Scanner Platform</h1>
             <p class="auth-subtitle">Akses sinyal trading & fitur analisis otomatis</p>
         </div>
 
@@ -162,36 +204,53 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-
-            <div class="form-group">
-                <label class="form-label" for="name">Nama Lengkap</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required autofocus placeholder="John Trader">
+        @if(isset($registrationAllowed) && !$registrationAllowed)
+            <div class="registration-closed-box">
+                <h3>🔒 Pendaftaran Ditutup</h3>
+                <p>
+                    Platform ini saat ini dikonfigurasi khusus untuk pengguna internal / <em>Invite-Only</em>. Pendaftaran akun baru secara terbuka dinonaktifkan.
+                </p>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="email">Alamat Email</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" required placeholder="nama@email.com">
+            <a href="{{ route('login') }}" class="btn-submit">
+                ⬅️ KEMBALI KE HALAMAN LOGIN
+            </a>
+        @else
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+
+                <div class="form-group">
+                    <label class="form-label" for="name">Nama Lengkap</label>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required autofocus placeholder="John Trader">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Alamat Email</label>
+                    <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" required placeholder="nama@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="Minimal 8 karakter">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password_confirmation">Konfirmasi Password</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required placeholder="Ulangi password">
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    ✨ BUAT AKUN SEKARANG
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Sudah memiliki akun? <a href="{{ route('login') }}">Login Sekarang</a>
             </div>
+        @endif
 
-            <div class="form-group">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" required placeholder="Minimal 8 karakter">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="password_confirmation">Konfirmasi Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required placeholder="Ulangi password">
-            </div>
-
-            <button type="submit" class="btn-submit">
-                ✨ BUAT AKUN SEKARANG
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            Sudah memiliki akun? <a href="{{ route('login') }}">Login Sekarang</a>
+        <div class="risk-disclaimer">
+            <span>⚠️ Disclaimer Risiko Trading:</span> Perdagangan aset kripto memiliki tingkat risiko yang tinggi. Semua indikator & sinyal dalam platform ini hanya sebagai alat bantu analisis teknis dan bukan merupakan nasehat keuangan (*Financial Advice*).
         </div>
     </div>
 </div>
