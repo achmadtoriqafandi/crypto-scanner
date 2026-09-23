@@ -26,7 +26,7 @@ class SecurityHeadersMiddleware
             'X-XSS-Protection'          => '1; mode=block',
             'Referrer-Policy'           => 'strict-origin-when-cross-origin',
             'Permissions-Policy'        => 'camera=(), microphone=(), geolocation=()',
-            'Content-Security-Policy'   => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:;",
+            'Content-Security-Policy'   => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https: wss: wss://stream.binance.com:9443 wss://*.binance.com;",
         ];
 
         if ($request->isSecure() || env('FORCE_HTTPS', false)) {
