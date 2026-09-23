@@ -57,15 +57,22 @@ class AiNewsSentimentService
     public function getOverallMarketSentiment(): array
     {
         $recentNews = NewsSentiment::where('published_at', '>=', now()->subDays(3))->get();
-        if ($recentNews->isEmpty()) {
-            return ['score' => 65, 'label' => 'Bullish Momentum', 'emoji' => '🟢'];
+        $newsScore = $recentNews->isEmpty() ? 50 : round((( (float)$recentNews->avg('sentiment_score') + 1) / 2) * 100);
+
+        // Technical Trend Ratio (% of active coins above MA20)
+        $indicators = \App\Models\Indicator::whereIn('coin_id', Coin::active()->pluck('id'))
+            ->where('interval', '1h')
+            ->latest('calculated_at')
+            ->get();
+
+        $techScore = 50;
+        if ($indicators->isNotEmpty()) {
+            $aboveMa20Count = $indicators->where('is_above_ma20', true)->count();
+            $techScore = round(($aboveMa20Count / $indicators->count()) * 100);
         }
 
-        $avgScore = (float)$recentNews->avg('sentiment_score');
-        $bullishCount = $recentNews->where('sentiment_label', 'bullish')->count();
-        $bearishCount = $recentNews->where('sentiment_label', 'bearish')->count();
-
-        $normalScore = round((($avgScore + 1) / 2) * 100);
+        // Blend 50% AI News Sentiment + 50% Technical Trend Ratio for 100% coherence
+        $normalScore = round(($newsScore * 0.5) + ($techScore * 0.5));
 
         if ($normalScore >= 65)     $label = 'Greed / Strong Bullish';
         elseif ($normalScore >= 55) $label = 'Mild Bullish';
@@ -76,9 +83,10 @@ class AiNewsSentimentService
         return [
             'score'         => $normalScore,
             'label'         => $label,
-            'bullish_count' => $bullishCount,
-            'bearish_count' => $bearishCount,
+            'bullish_count' => $recentNews->where('sentiment_label', 'bullish')->count(),
+            'bearish_count' => $recentNews->where('sentiment_label', 'bearish')->count(),
             'total_news'    => $recentNews->count(),
+            'tech_score'    => $techScore,
         ];
     }
 

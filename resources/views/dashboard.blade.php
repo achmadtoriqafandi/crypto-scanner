@@ -27,7 +27,10 @@
         <div class="stat-icon">⚡</div>
         <div class="stat-label">Signals Today</div>
         <div class="stat-value">{{ $signalsToday }}</div>
-        <div class="stat-change">{{ $signalsSent }} sent &bull; {{ $signalsPending }} pending</div>
+        <div class="stat-change">
+            @php $tgCfg = !empty(config('scanner.telegram.bot_token')); @endphp
+            {{ $signalsSent }} sent &bull; {{ $signalsPending }} {{ $tgCfg ? 'pending' : 'active in-app' }}
+        </div>
     </div>
     <div class="stat-card green">
         <div class="stat-icon">🟢</div>
@@ -228,7 +231,7 @@
 
             {{-- Win Rate --}}
             <div style="text-align:center;padding:16px;background:var(--bg-800);border-radius:12px;border:1px solid var(--border)">
-                <div style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Win Rate</div>
+                <div style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Win Rate (Closed Trades Only)</div>
                 <div style="font-size:38px;font-weight:800;font-family:var(--font-mono);color:{{ $winRate >= 60 ? 'var(--green)' : ($winRate >= 40 ? 'var(--yellow)' : 'var(--text-primary)') }};margin:4px 0">
                     {{ $winRate }}%
                 </div>
@@ -236,7 +239,7 @@
                     <div class="confidence-fill" style="width:{{ $winRate }}%;background:{{ $winRate >= 60 ? 'var(--grad-green)' : 'var(--grad-primary)' }}"></div>
                 </div>
                 <div style="font-size:11px;color:var(--text-muted);margin-top:8px">
-                    {{ $totalWins }}W / {{ $totalLosses }}L ({{ $totalClosed }} closed)
+                    {{ $totalWins }}W / {{ $totalLosses }}L ({{ $totalClosed }} closed trades &bull; {{ $activeSignals }} active)
                 </div>
             </div>
 

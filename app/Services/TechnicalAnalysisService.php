@@ -87,20 +87,20 @@ class TechnicalAnalysisService
             }
         }
 
-        // 5. RSI Zone
+        // 5. RSI Zone Analysis
         $rsi = (float)$indicator->rsi;
-        if ($indicator->is_rsi_healthy) {
-            $reasons[] = "✅ RSI healthy: " . round($rsi, 1) . " (50-70 bullish zone)";
+        if ($rsi >= 50 && $rsi <= 65) {
+            $reasons[] = "✅ RSI healthy bullish momentum: " . round($rsi, 1);
             $longScore++;
             $score++;
         } elseif ($rsi > 30 && $rsi < 50) {
-            $reasons[] = "⚠️ RSI bearish: " . round($rsi, 1);
+            $reasons[] = "⚠️ RSI bearish momentum: " . round($rsi, 1);
             $shortScore++;
+            $score++;
         } elseif ($rsi >= 70) {
-            $reasons[] = "⚠️ RSI overbought: " . round($rsi, 1);
+            $reasons[] = "⚠️ RSI overbought (rejection potential): " . round($rsi, 1);
         } elseif ($rsi <= 30) {
-            $reasons[] = "⚠️ RSI oversold (reversal potential): " . round($rsi, 1);
-            $shortScore++;
+            $reasons[] = "⚠️ RSI oversold (bounce/reversal potential): " . round($rsi, 1);
         }
 
         // 6. Bollinger Band Squeeze (breakout imminent)
@@ -249,10 +249,16 @@ class TechnicalAnalysisService
                 $drivers = array_slice($analysis['reasons'], 0, 3);
             }
 
-            $oppScore = count($drivers) * 15 + ($analysis['score'] * 5);
-            if ($direction === 'LONG' && $ind->is_above_ma20) $oppScore += 10;
-            if ($direction === 'SHORT' && !$ind->is_above_ma20) $oppScore += 10;
-            $oppScore = min(98, max(25, $oppScore));
+            // Dynamic Confidence Score matching SignalGeneratorService (0–98%)
+            $maxScore = 6;
+            $oppScore = min(98, round(($analysis['score'] / $maxScore) * 100));
+            if ($analysis['long_score'] >= 4 || $analysis['short_score'] >= 4) {
+                $oppScore = min(98, $oppScore + 10);
+            }
+            if ($oppScore < 60) {
+                $oppScore = max(60, count($drivers) * 20);
+            }
+
             $price     = (float)($coin->last_price ?? 100);
             $rawAtr    = (float)($ind->atr ?? 0);
             $atr       = ($rawAtr > 0 && $rawAtr <= ($price * 0.05)) ? $rawAtr : ($price * 0.02);

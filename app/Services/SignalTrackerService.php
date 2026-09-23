@@ -86,15 +86,11 @@ class SignalTrackerService
                 $newOutcome = 'hit_tp3';
                 $pnlPct     = (($tp3 - $entry) / $entry) * 100 * $leverage;
             } elseif ($currentHighest >= $tp2) {
-                // If price retraces back below TP1 after hitting TP2, close with TP2 profit
                 $newOutcome = 'hit_tp2';
                 $pnlPct     = (($tp2 - $entry) / $entry) * 100 * $leverage;
             } elseif ($currentHighest >= $tp1) {
-                // Trailing SL at Entry: if price drops below entry after TP1, close as HIT_TP1 (Break-Even)
-                if ($currentLowest <= $entry) {
-                    $newOutcome = 'hit_tp1';
-                    $pnlPct     = (($tp1 - $entry) / $entry) * 100 * $leverage;
-                }
+                $newOutcome = 'hit_tp1';
+                $pnlPct     = (($tp1 - $entry) / $entry) * 100 * $leverage;
             } elseif ($currentLowest <= $sl) {
                 $newOutcome = 'hit_sl';
                 $pnlPct     = (($sl - $entry) / $entry) * 100 * $leverage; // negative
@@ -108,18 +104,16 @@ class SignalTrackerService
                 $newOutcome = 'hit_tp2';
                 $pnlPct     = (($entry - $tp2) / $entry) * 100 * $leverage;
             } elseif ($currentLowest <= $tp1) {
-                if ($currentHighest >= $entry) {
-                    $newOutcome = 'hit_tp1';
-                    $pnlPct     = (($entry - $tp1) / $entry) * 100 * $leverage;
-                }
+                $newOutcome = 'hit_tp1';
+                $pnlPct     = (($entry - $tp1) / $entry) * 100 * $leverage;
             } elseif ($currentHighest >= $sl) {
                 $newOutcome = 'hit_sl';
                 $pnlPct     = (($entry - $sl) / $entry) * 100 * $leverage; // negative
             }
         }
 
-        // Cek jika sinyal sudah kadaluarsa (> 48 jam tanpa tersentuh TP/SL)
-        if ($newOutcome === 'pending' && $signal->created_at->diffInHours(now()) >= 48) {
+        // Cek jika sinyal sudah kadaluarsa (> 24 jam tanpa tersentuh TP/SL)
+        if ($newOutcome === 'pending' && $signal->created_at->diffInHours(now()) >= 24) {
             $newOutcome = 'expired';
             $pnlPct     = 0;
         }

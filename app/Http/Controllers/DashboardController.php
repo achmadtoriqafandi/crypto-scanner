@@ -21,7 +21,7 @@ class DashboardController extends Controller
         $signalsPending = Signal::pending()->count();
         $signalsLong    = Signal::today()->where('direction', 'LONG')->count();
         $signalsShort   = Signal::today()->where('direction', 'SHORT')->count();
-        $lastScan       = ScanLog::where('stage', 'info')->latest()->first();
+        $lastScan       = ScanLog::latest()->first();
         $recentSignals  = Signal::with('coin')->latest()->limit(5)->get();
         $recentLogs     = ScanLog::with('coin')->latest()->limit(10)->get();
 
@@ -217,11 +217,18 @@ class DashboardController extends Controller
     public function runScanner(Request $request)
     {
         try {
+            $interval = $request->get('interval', '1h');
             $scanner = app(\App\Services\ScannerService::class);
-            $stats = $scanner->run($request->get('interval', '1h'));
+            $stats = $scanner->run($interval);
 
             $tracker = app(\App\Services\SignalTrackerService::class);
             $tracker->trackAllActiveSignals();
+
+            ScanLog::create([
+                'stage'   => 'info',
+                'status'  => 'success',
+                'message' => "Scan executed successfully ({$interval}). Generated: {$stats['signals_generated']} signals.",
+            ]);
 
             return response()->json(['success' => true, 'stats' => $stats]);
         } catch (\Exception $e) {
